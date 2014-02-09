@@ -66,10 +66,11 @@ int main(int count, char **args)
 	}
 
 	fread(buffer, 1, 6, fd);
+	// print_hex_chars(buffer, 6);
 	read_format(buffer, &format);
-	//printf("format %i\n", format.format);
-	//printf("tracks %i\n", format.number_of_tracks);
-	//printf("deltatime_ticks %i\n", format.deltatime_ticks);
+	printf("format %i\n", format.format);
+	printf("tracks %i\n", format.number_of_tracks);
+	printf("deltatime_ticks %i\n", format.deltatime_ticks);
 
 
 

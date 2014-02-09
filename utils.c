@@ -36,24 +36,34 @@ char high_nibble(char byte) {
 short chars_to_int(char *buffer) {
 	int n;
 	int i;
-	int temp;
+	int temp1;
+	int temp2;
 	char byte;
 	// print_hex_chars(buffer, 2);
 
 	n = 0;
-	temp = 16384;
+	temp1 = 0x4000;
+	temp2 = 0x40;
 
 	if (buffer[0] & 0x80) {
 		printf("no support for negative numbers.\n");
 		return 0;
 	}
 
-	for (i = 0; i < 15; i++) {
+	for (i = 1; i < 16; i++) {
 		byte = buffer[i / 8];
-		if (byte & temp) {
-			n = n + temp;
+
+		if (byte & temp2) {
+			n = n + temp1;
 		}
-		temp = temp / 2;
+
+		if ((i + 1) % 8 == 0) {
+			temp2 = 0x80;
+		} else {
+			temp2 = temp2 / 2;
+		}
+
+		temp1 = temp1 / 2;
 	}
 	return n;
 }
@@ -82,7 +92,7 @@ long chars_to_long(char *buffer) {
 			num = num + temp;
 		}
 
-		if ((i+1) % 8 == 0) {
+		if ((i + 1) % 8 == 0) {
 			temp2 = 0x80;
 		} else {
 			temp2 = temp2 / 2;
