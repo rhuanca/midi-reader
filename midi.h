@@ -24,10 +24,16 @@ typedef struct midi_format_struct {
 	int deltatime_ticks;
 } midi_format;
 
-
+typedef struct midi_event_structure {
+	char status_byte;
+	char channel_byte;
+	char data_one;
+	char data_two;
+} midi_event;
 
 bool check_file(char *buffer);
 bool check_length(char *buffer);
 void read_format(char *buffer, midi_format *format);
 int read_track_length(char *buffer);
+void read_midi_events(char *buffer, int num_tracks, midi_event *events);
 #endif /* MIDI_H_ */

@@ -102,6 +102,52 @@ long chars_to_long(char *buffer) {
 	return num;
 }
 
+long vql_to_long(char *buffer, int n) {
+	int i, j;
+	union number_union {
+		long number;
+		char bytes[4];
+	} temp;
+
+	temp.number = 0;
+
+	for (i = 0; i < n - 1; i++) { // clean leading 1(s)
+		buffer[i] = buffer[i] & 0x7F;
+	}
+
+	for (i = 0; i < n; i++) { // ok copy and rotate num_bytes times.
+		for (j = n - i - 1; j > 0; j--) { // copy
+			if (buffer[j - 1] & 0x01) {
+				buffer[j] = buffer[j] | 0x80;
+			} else {
+				buffer[j] = buffer[j] & 0x7F;
+			}
+		}
+
+		for (j = n - i - 2; j >= 0; j--) { // rotate
+			buffer[j] = buffer[j] >> 1;
+		}
+		temp.bytes[i] = (char) buffer[n - i - 1]; // little endian
+	}
+
+	return temp.number;
+}
+
+void read_vql(char **current, char *vql) {
+	int i;
+	i = 0;
+
+	printf(">>>> **current %lu\n", **current);
+	printf("*current %lu\n", *current);
+	do {
+		vql[i] = **current;
+		(*current)++;
+		printf("*current %lu\n", *current);
+		printf("*char %x\n", vql[i]);
+		i++;
+	} while (vql[i] & 0x80);
+}
+
 void print_hex_chars(char *buffer, int n) {
 	int i;
 	int low_byte;
