@@ -133,19 +133,14 @@ long vql_to_long(char *buffer, int n) {
 	return temp.number;
 }
 
-void read_vql(char **current, char *vql) {
-	int i;
-	i = 0;
-
-	printf(">>>> **current %lu\n", **current);
-	printf("*current %lu\n", *current);
+int read_vql(char **current, char *vql) {
+	int i = 0;
 	do {
 		vql[i] = **current;
 		(*current)++;
-		printf("*current %lu\n", *current);
-		printf("*char %x\n", vql[i]);
 		i++;
-	} while (vql[i] & 0x80);
+	} while ( vql[i-1] & 0x80 );
+	return i;
 }
 
 void print_hex_chars(char *buffer, int n) {

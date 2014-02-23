@@ -14,7 +14,7 @@ char high_nibble(char byte);
 short chars_to_int(char *buffer);
 long chars_to_long(char *buffer);
 long vql_to_long(char *buffer, int n);
-void read_vql(char **buffer, char *vql);
+int read_vql(char **buffer, char *vql);
 void print_hex_chars(char *buffer, int n);
 char int_to_hex(int i);
 

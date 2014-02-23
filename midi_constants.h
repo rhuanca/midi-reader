@@ -71,10 +71,5 @@ typedef struct midi_time_structure {
 	char data_byte_two;
 } midi_event;*/
 
-/*typedef struct midi_track_structure {
-	short int track_number;
-	short int track_event_count;
-	midi_event midi_events[131072];
-};*/
 
 #endif /* MIDI_CONSTANTS_H_ */
