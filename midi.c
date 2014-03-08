@@ -53,32 +53,23 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 
 	i = 0;
 	do {
-		printf(">>>> ");
-		print_hex_chars(current, 5);
+		printf("RAW:");
+		print_hex_chars(current, 10);
 		vql_len = read_vql(&current, vql);
-		printf("vql len = %i\n", vql_len);
 		delta_time = vql_to_long(vql, vql_len);
 		event = &(track->midi_events[i]);
-		printf("delta time = %i\n", delta_time);
 		if (*current == MIDI_META_EVENT) {
-			printf("read meta event\n");
 			event->delta_time = delta_time;
 			event->is_meta = 1;
 			read_midi_meta_event(&current, event);
 		} else if (*current & (char)0x80) {
-			printf("it is a message\n");
 			print_hex_chars(current, 12);
 			break;
 		} else {
-
-			printf("entro else \n");
 			print_hex_chars(current, 1);
 			break;
 		}
-
-		// print_hex_chars(event->data, event->data_len);
-		printf("oops event: %x\n", event->event);
-		//track->midi_events[i] = *event;
+		printf("  %i - Event:%2x \n", delta_time, event->event);
 		i++;
 	} while (event->event != MIDI_END_OF_TRACK_EVENT);
 	track->track_event_count = i;
@@ -144,42 +135,21 @@ int main(int argc, char *argv[]) {
 	}
 
 	fread(buffer, 1, 6, fd);
-// print_hex_chars(buffer, 6);
 	read_format(buffer, &format);
-	printf("format %i\n", format.format);
-	printf("tracks %i\n", format.number_of_tracks);
-	printf("deltatime_ticks %i\n", format.deltatime_ticks);
 
 	// read tracks
 	for(i=0;i< format.number_of_tracks; i++) {
-
-		printf("=================== reading track %i\n", i);
 		fread(buffer, 1, 8, fd);
-		// print_hex_chars(buffer, 8);
 		trk_len = read_track_length(buffer);
-		printf("track length = %i\n", trk_len);
-
+		printf("Track %i: length = %i\n", i, trk_len);
 		read_count = fread(buffer, 1, trk_len, fd);
 		if (read_count != trk_len) {
 			printf("unable to read track.\n");
 			fclose(fd);
 			return 1;
 		}
-
-		// printf("starting to read first track.\n");
 		read_midi_events(buffer, trk_len, &tracks[i]);
-		printf("event counts = %i\n", tracks[i].track_event_count);
-
-//		fread(buffer, 1, 8, fd);
-//		buffer[8] = '\0';
-//		printf(buffer);
-//		print_hex_chars(buffer, 8);
-
 	}
-
-//read_count = fread(buffer, 1, 4, fd);
-//buffer[4] = '\0';
-//printf(buffer);
 
 	fclose(fd);
 	return 0;
