@@ -32,6 +32,7 @@ void read_format(char *buffer, midi_format *format) {
 
 int read_track_length(char *buffer) {
 	unsigned long len;
+	printf(">>>> ");
 	print_hex_chars(buffer, 8);
 	if (buffer[0] != 'M' && buffer[1] != 'T' && buffer[2] != 'r'
 			&& buffer[3] != 'k') {
@@ -53,6 +54,7 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 
 	i = 0;
 	do {
+		printf("\n");
 		printf("RAW:");
 		print_hex_chars(current, 10);
 		vql_len = read_vql(&current, vql);
@@ -69,7 +71,10 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 			print_hex_chars(current, 1);
 			break;
 		}
-		printf("  %i - Event:%2x \n", delta_time, event->event);
+		printf("  %i - event: %2x\n", delta_time, event->event);
+		printf("      length : %i\n", event->data_len);
+		printf("      data : ");
+		print_hex_chars(event->data, event->data_len);
 		i++;
 	} while (event->event != MIDI_END_OF_TRACK_EVENT);
 	track->track_event_count = i;
@@ -113,7 +118,8 @@ int main(int argc, char *argv[]) {
 	int i;
 	midi_track tracks[5];
 
-	fd = fopen("beethoven_fur_elise.mid", "r");
+	// fd = fopen("beethoven_fur_elise.mid", "r");
+	fd = fopen("Beethoven_Symphony_No._5_4th.mid", "r");
 
 	if (fd == 0) {
 		printf("unable to open midi file.\n");
