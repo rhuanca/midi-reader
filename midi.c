@@ -137,6 +137,11 @@ int main(int argc, char *argv[]) {
 	fread(buffer, 1, 6, fd);
 	read_format(buffer, &format);
 
+	printf("Midi Info:\n" );
+	printf("  Format: %i\n", format.format);
+	printf("  Delta Time Ticks: %i\n", format.deltatime_ticks);
+	printf("  # of Tracks: %i\n", format.number_of_tracks);
+
 	// read tracks
 	for(i=0;i< format.number_of_tracks; i++) {
 		fread(buffer, 1, 8, fd);
