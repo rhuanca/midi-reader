@@ -16,6 +16,7 @@ long chars_to_long(char *buffer);
 long vql_to_long(char *buffer, int n);
 int read_vql(char **buffer, char *vql);
 void print_hex_chars(char *buffer, int n);
+void print_as_string(char *buffer, int n);
 char int_to_hex(int i);
 
 

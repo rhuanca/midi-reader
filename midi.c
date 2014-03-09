@@ -65,16 +65,19 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 			event->is_meta = 1;
 			read_midi_meta_event(&current, event);
 		} else if (*current & (char)0x80) {
+			printf("oooops1\n");
 			print_hex_chars(current, 12);
 			break;
 		} else {
+			printf("oooops2\n");
 			print_hex_chars(current, 1);
 			break;
 		}
-		printf("  %i - event: %2x\n", delta_time, event->event);
 		printf("      length : %i\n", event->data_len);
 		printf("      data : ");
-		print_hex_chars(event->data, event->data_len);
+		//print_hex_chars(event->data, event->data_len);
+		print_as_string(event->data, event->data_len);
+
 		i++;
 	} while (event->event != MIDI_END_OF_TRACK_EVENT);
 	track->track_event_count = i;
@@ -87,7 +90,6 @@ void read_midi_meta_event(char **current, midi_event *event) {
 	event->event = **current;
 	(*current)++;
 	event->data_len = **current;
-
 	for (i = 0; i < event->data_len; i++) {
 		(*current)++;
 		event->data[i] = **current;
@@ -119,7 +121,8 @@ int main(int argc, char *argv[]) {
 	midi_track tracks[5];
 
 	// fd = fopen("beethoven_fur_elise.mid", "r");
-	fd = fopen("Beethoven_Symphony_No._5_4th.mid", "r");
+	// fd = fopen("Beethoven_Symphony_No._5_4th.mid", "r");
+	fd = fopen("clemtine.mid", "r");
 
 	if (fd == 0) {
 		printf("unable to open midi file.\n");

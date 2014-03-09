@@ -139,7 +139,7 @@ int read_vql(char **current, char *vql) {
 		vql[i] = **current;
 		(*current)++;
 		i++;
-	} while ( vql[i-1] & 0x80 );
+	} while (vql[i - 1] & 0x80);
 	return i;
 }
 
@@ -153,6 +153,20 @@ void print_hex_chars(char *buffer, int n) {
 		printf("%c%c", int_to_hex(high_byte), int_to_hex(low_byte));
 		if (i < n - 1) {
 			printf(" ");
+		}
+	}
+	printf("\n");
+}
+
+void print_as_string(char *buffer, int n) {
+	int i;
+	int low_byte;
+	int high_byte;
+	for (i = 0; i < n; i++) {
+		if (isprint(buffer[i])) {
+			printf("%c", buffer[i]);
+		} else {
+			printf(".");
 		}
 	}
 	printf("\n");
