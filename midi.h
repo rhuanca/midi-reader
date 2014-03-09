@@ -36,7 +36,7 @@ typedef struct midi_format_struct {
 
 typedef struct midi_event_structure {
 	long delta_time;
-	int is_meta;
+	int type;
 	char event;
 	char data[50];
 	char data_len;

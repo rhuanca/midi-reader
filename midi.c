@@ -63,12 +63,12 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 		event = &(track->midi_events[i]);
 		if (*current == MIDI_META_EVENT) {
 			event->delta_time = delta_time;
-			event->is_meta = 1;
+			event->type = 1;
 			read_midi_meta_event(&current, event);
 		} else if (*current & (char) 0x80) {
 			print_hex_chars(current, 12);
 			event->delta_time = delta_time;
-			event->is_meta = 0;
+			event->type = 0;
 			read_midi_event(&current, event);
 			// printf("oooops1\n");
 
