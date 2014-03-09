@@ -64,7 +64,7 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 			event->delta_time = delta_time;
 			event->is_meta = 1;
 			read_midi_meta_event(&current, event);
-		} else if (*current & (char)0x80) {
+		} /*else if (*current & (char)0x80) {
 			printf("oooops1\n");
 			print_hex_chars(current, 12);
 			break;
@@ -72,12 +72,14 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 			printf("oooops2\n");
 			print_hex_chars(current, 1);
 			break;
-		}
-		printf("      length : %i\n", event->data_len);
-		printf("      data : ");
-		//print_hex_chars(event->data, event->data_len);
-		print_as_string(event->data, event->data_len);
+		}*/
 
+		printf("      event: %.2X\n", event->event);
+		printf("      length: %i\n", event->data_len);
+		printf("      data hex: ");
+		print_hex_chars(event->data, event->data_len);
+		printf("      data str: ");
+		print_as_string(event->data, event->data_len);
 		i++;
 	} while (event->event != MIDI_END_OF_TRACK_EVENT);
 	track->track_event_count = i;
@@ -89,7 +91,8 @@ void read_midi_meta_event(char **current, midi_event *event) {
 	(*current)++;
 	event->event = **current;
 	(*current)++;
-	event->data_len = **current;
+	event->data_len = (int)(**current);
+	// improve memory using malloc.
 	for (i = 0; i < event->data_len; i++) {
 		(*current)++;
 		event->data[i] = **current;
@@ -163,6 +166,7 @@ int main(int argc, char *argv[]) {
 			return 1;
 		}
 		read_midi_events(buffer, trk_len, &tracks[i]);
+		break;
 	}
 
 	fclose(fd);
