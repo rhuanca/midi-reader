@@ -49,6 +49,7 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 	int vql_len;
 	int i;
 	long delta_time;
+	int quit = 0;
 	midi_event *event;
 	current = buffer;
 
@@ -64,22 +65,30 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 			event->delta_time = delta_time;
 			event->is_meta = 1;
 			read_midi_meta_event(&current, event);
-		} /*else if (*current & (char)0x80) {
-			printf("oooops1\n");
+		} else if (*current & (char) 0x80) {
 			print_hex_chars(current, 12);
-			break;
+			event->delta_time = delta_time;
+			event->is_meta = 0;
+			read_midi_event(&current, event);
+			// printf("oooops1\n");
+
+			quit = 1;
 		} else {
 			printf("oooops2\n");
 			print_hex_chars(current, 1);
 			break;
-		}*/
-
-		printf("      event: %.2X\n", event->event);
+		}
+		printf("delta-time: %i\n", event->delta_time);
+		printf("      event: %.2X\n", (unsigned char)event->event);
 		printf("      length: %i\n", event->data_len);
 		printf("      data hex: ");
 		print_hex_chars(event->data, event->data_len);
 		printf("      data str: ");
 		print_as_string(event->data, event->data_len);
+
+		if (quit) {
+			break;
+		}
 		i++;
 	} while (event->event != MIDI_END_OF_TRACK_EVENT);
 	track->track_event_count = i;
@@ -91,7 +100,7 @@ void read_midi_meta_event(char **current, midi_event *event) {
 	(*current)++;
 	event->event = **current;
 	(*current)++;
-	event->data_len = (int)(**current);
+	event->data_len = (int) (**current);
 	// improve memory using malloc.
 	for (i = 0; i < event->data_len; i++) {
 		(*current)++;
@@ -100,8 +109,11 @@ void read_midi_meta_event(char **current, midi_event *event) {
 	(*current)++;
 }
 
-void read_midi_event(char **buffer, midi_event *event) {
-
+void read_midi_event(char **current, midi_event *event) {
+	// (*current)++;
+	event->event = **current;
+	(*current)++;
+	event->data_len = 0;
 }
 
 void print_midi_event_desc(char evt) {
@@ -149,13 +161,13 @@ int main(int argc, char *argv[]) {
 	fread(buffer, 1, 6, fd);
 	read_format(buffer, &format);
 
-	printf("Midi Info:\n" );
+	printf("Midi Info:\n");
 	printf("  Format: %i\n", format.format);
 	printf("  Delta Time Ticks: %i\n", format.deltatime_ticks);
 	printf("  # of Tracks: %i\n", format.number_of_tracks);
 
 	// read tracks
-	for(i=0;i< format.number_of_tracks; i++) {
+	for (i = 0; i < format.number_of_tracks; i++) {
 		fread(buffer, 1, 8, fd);
 		trk_len = read_track_length(buffer);
 		printf("Track %i: length = %i\n", i, trk_len);
