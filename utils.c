@@ -180,3 +180,11 @@ char int_to_hex(int i) {
 	}
 	return ' ';
 }
+
+void copy_chars(char *to, char *from, int size) {
+	int i;
+	for (i = 0; i < size; i++) {
+		printf(">>> %i\n", i);
+		to[i] = from[i];
+	}
+}

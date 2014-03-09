@@ -65,21 +65,17 @@ int read_midi_events(char *buffer, int num_tracks, midi_track *track) {
 			event->delta_time = delta_time;
 			event->type = 1;
 			read_midi_meta_event(&current, event);
-		} else if (*current & (char) 0x80) {
-			print_hex_chars(current, 12);
+		} else if (*current == (char) 0xF0) {
 			event->delta_time = delta_time;
-			event->type = 0;
-			read_midi_event(&current, event);
-			// printf("oooops1\n");
-
-			quit = 1;
+			event->type = 2;
+			read_midi_system_event(&current, event);
 		} else {
 			printf("oooops2\n");
 			print_hex_chars(current, 1);
 			break;
 		}
 		printf("delta-time: %i\n", event->delta_time);
-		printf("      event: %.2X\n", (unsigned char)event->event);
+		printf("      event: %.2X\n", (unsigned char) event->event);
 		printf("      length: %i\n", event->data_len);
 		printf("      data hex: ");
 		print_hex_chars(event->data, event->data_len);
@@ -114,6 +110,22 @@ void read_midi_event(char **current, midi_event *event) {
 	event->event = **current;
 	(*current)++;
 	event->data_len = 0;
+}
+
+void read_midi_system_event(char **current, midi_event *event) {
+	char vql[4];
+	int vql_len;
+	long data_len;
+	int i;
+	event->event = **current;
+	(*current)++;
+
+	vql_len = read_vql(current, vql);
+	data_len = vql_to_long(vql, vql_len);
+	event->data_len = data_len;
+
+	memmove(event->data, *current, sizeof(char)*data_len);
+	(*current) = (*current) + data_len;
 }
 
 void print_midi_event_desc(char evt) {

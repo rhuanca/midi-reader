@@ -57,6 +57,7 @@ int read_track_length(char *buffer);
 int read_midi_events(char *buffer, int num_tracks, midi_track *track);
 void read_midi_meta_event(char **buffer, midi_event *event);
 void read_midi_event(char **buffer, midi_event *event);
+void read_midi_system_event(char **buffer, midi_event *event);
 
 void print_midi_event_desc(char evt);
 
